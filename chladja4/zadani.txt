@@ -1,0 +1,86 @@
+Zadání - PROGTEST
+
+Vaším úkolem je implementovat engine pro karetní RPG, nesnažte se proto implementovat v kódu jednotlivé části příběhu.
+Ten by měl být definovaný v konfiguračních souborech a změnit "gobliního válečníka" na "turbo včelu" by měl být snadný.
+
+Hry musí splňovat alespoň následující režimy:
+
+    hra jednoho hráče proti umělé inteligenci (náhodné tahy nestačí),
+
+    hra dvou hráčů (v případě lokální hry, může být hra otevřená "hráči si vidí do karet" nebo naopak 
+    uzavřená "hráči si nevidí do karet a předání probíhá před potvrzovací okno, aby si soupeři neviděli do karet")
+
+Engine musí splňovat následující funkcionality:
+
+    Umožní vytvořit a hrát samotnou hru.
+
+    Implementujte základní herní cyklus (př. hráč odehraje libovolné množství karet, lízne si právě jednu 
+    kartu a odehraje opět libovolné množství karet, poté hraje další hráč, …).
+
+    Implementujte alespoň 5 speciálních efektů karet (př. síla útoku, síla obrany, lízni si X karet, zahoď X karet, obětuj postavu, …),
+    přičemž karty se skládají z několika takových efektů (př. "Goblin" má útok 3, obranu 1, a při vyložení si hráč lízne 1 kartu).
+
+    Hra musí být konfigurovatelná ze souboru:
+
+        definice karet (př. název, vzhled, popis karty, efekty a jejich parametry)
+
+        definice balíčků (př. jaké karty jsou k dispozici, v jakém počtu)
+
+    Hra musí umožnit uložit a následně načíst rozehranou hru.
+
+Kde lze využít polymorfismus? (doporučené)
+
+    typy karet: útočné, obranné, speciální, …
+
+    efekty karet: síla útoku, síla obrany, lízni si X karet, zahoď X karet, obětuj postavu, …
+
+    ovládání hráče: lokální hráč, umělá inteligence (různé druhy), síťový hráč, …
+
+    uživatelské rozhraní: konzole, ncurses, SDL, OpenGL (různé varianty), …
+=================================================================================================================================================
+
+Detailní specifikace zadání
+
+Jako svou semestrální práci jsem si vybral engine pro karetní RPG, jako předlohu jsem použil českou karetní hru Mravenci.
+Je to hra pro dva hráče, každý hráč má hrad (základnu) a karty. Hráči pomocí karet buď staví svojí základnu, ničí základnu
+nepřítele nebo doplňují, kradou, ničí zdroje druhého hráče. Po tom co hráč dokončí tah se mu doplní zdroje dle toho kolik má jednotek.
+Když základna hráče dosáhne 100 hráč vyhrál. Pokud jeho základna klesne na 0 hráč prohrává.
+
+Hru jsem se rozhodl implementovat v konzoli. Po startu hry si hráč bude moct vybrat zda chce začít novou hru (proti AI, proti hráči) nebo 
+chce načíst rozehranou hru. Rozehrané hry budu ukládat ve zjednodušeném .csv formatu. Hráči se zobrazí jaké hry si může načíst a pomocí
+zadání jména souboru si vybere.
+
+Poté se hra načte bud z uložené hry nebo se načte defaultní konfigurační soubor. V konfiguračním souboru bude možné nastavit kupa parametrů.
+Například definice karet, zdrojů, jednotek, toho jaká jednotka doplňuje jaké zdroje, kdy je hra vyhraná (default = 100), prohraná (default=0).
+Na nové hry se náhodně obou hráčům vygenerují karty.
+
+Samotná hra bude vypadat tak že se vždy vypíší informace o aktuálním hráči a co může hrát za karty. Hráč si vybere kartu, budou očíslované {1..n}
+a toto číslo napíše do terminálu. Poté se zase zobrazí informace o druhém hráči a vybere si kartu.
+
+Během hry hráči také budou moct používat příkazy. Bude možné si zobrazit nápovědu pomoci "help", bude možné vzdát hru pomocí "quit" a také 
+bude možné uložit hru pomocí "save". Pokud bude zadán příkaz save, hráči se zobrazí adresář s uloženými soubory, zadá jméno souboru do
+které chce hru uložit, pokud soubor v adresáři je program se zeptá zda chce tento soubor přepsat.
+
+Když jeden z hráčů dosáhne určité hodnoty základny nebo se mu podaří zničit nepřítelovu základnu hra končí.
+=================================================================================================================================================
+
+
+Využití polymorfismu:
+
+
+Polymorfismus jsem se v projektu rozhodl použít na dvou místech. Na efektech jednotlivých karet a hráči.
+
+Vzhledem k tomu že hra má umět režim proti lokálnímu hráči a proti AI, budeme mít třídu CLocalPlayer a CAIPlayer které budou dědit z abstraktní
+třídy CPlayer. V abstraktní třídě budou metody například MakeMove které se budou chovat pro každý typ jinak. Lokální hráč bude požádán o vstup,
+AI bude hrát na základě jednoduchého algoritmu. To se nám bude hodit ve hře (CGame) kde budeme chtít zacházet s hráči stejně bez rozlišení typu.
+
+Během hry budou hráči v každém kole hrát karty. Každá karta může mít více efektů. Hra bude chtít na každém efektu zavolat Apply bez starosti o to
+jaký je to typ efektu. Apply se zachová adekvátně pro každý typ karty. Dále se nám to bude hodit například u načítáni, kde všechny efekty budou mít
+něco co má každý obecný efekt a něco specifického. K tomu využijeme voláni funkce Read u rodiče a poté si načteme věci specifické pro daný efekt.
+To samé u výpisu.
+
+Úplně nejvýše bude abstraktní třída CEffect, která bude pouze definovat rozhraní pro práci s efekty. Od ní poté budou dědit 2 konkrétní efekty
+CRefillEffect a CCardSwap. Poté budeme mít třídu CChangeEffect, která bude představovat efekty které něco ve hře mění podle atributu m_Power. Z
+této třídy bude dědit CResourceChange, CUnitChange a CBaseChange.
+
+Konkrétní diagramy lze nalézt v dokumentaci.

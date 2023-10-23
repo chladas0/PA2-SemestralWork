@@ -1,0 +1,79 @@
+Reading each part should be separated with one new line. Resources used in player has to be same as in global resources,
+same for the units.
+
+Global resources -> comma separated strings
+example: Bricks,Weapons,Crystals
+
+Global Units -> comma separated strings
+example:Builders,Soldiers,Magicians
+
+Card definitions -> Name as string, Resource from global resources, amount as int (minus value would give u resources)
+                 -> |attack number, defense number|effect type, power (if needed), resource(if needed);,
+                 -> card definitions can end with empty line or indent and then empty line
+
+example:AntWarrior,Weapons,20|5,0|b,10
+example:Dragon,Weapons,10,Crystals,10|20,0|b,-30
+example:AssaultRifle,Weapons,20|3,0|b,-5
+example:Archer,Weapons,25|6,0|b,-15
+example:Wagon,Bricks,10|5,5|b,+10,b,-10
+example:Burglar,Weapons,15,Crystals,10|10,10|b,20,b,-20
+example:AntBuilder,Bricks,7|0,3|b,20
+example:Tower,Bricks,10|0,5|b,10
+example:Fortress,Bricks,20|0,7|b,20
+example:CrystalGenerator,Crystals,5|5,5|r,20,Crystals
+example:BrickGenerator,Crystals,5|2,5|r,20,Bricks
+example:WeaponsGenerator,Crystals,5|5,0|r,20,Weapons
+example:CrystalDestroyer,Crystals,5|5,0|r,-10,Crystals
+example:School,Bricks,5,Crystals,5|0,6|u,4,Builders
+example:Army,Weapons,5,Crystals,5|5,0|u,4,Soldiers
+example:DavidCopperfield,Crystals,10|7,7|u,4,Magicians
+example:ResourceMine,Crystals,20|0,10|r,10,Bricks;,r,10,Crystals;,r,10,Weapons
+example:MagicTrick,Crystals,5|5,5|s
+example:Refiller,Crystals,10|0,6|f,2
+example:CrystalStealer,Crystals,5|6,0|r,10,Crystals;,r,-10,Crystals
+
+special_example:  UltimateCard,Crystals,10|0,6|f,2,r,10,Crystals;,r,-10,Crystals;,r,10,Bricks;,r,10,Crystals;,r,10,Weapons;,b,20,b,-20
+
+
+Player's name as a string
+example:Pepa
+
+Indexes into global Card deck
+example:1,2,3,2,1,4
+
+Base values
+example:40,0,100
+
+Refill map -> which units refill which resources from global resources and units
+example:Bricks,Builders
+example:Weapons,Soldiers
+example:Crystals,Magicians
+
+Resources and amount of resources from global resources
+example:Bricks,50
+example:Weapons,50
+example:Crystals,50
+
+Units and amount of units from global units
+example:Builders,4
+example:Magicians,4
+example:Soldiers,4
+
+Second player same as the first one
+Honza
+
+3,1,3,2,1,4,7
+
+40,0,100
+
+Bricks,Builders
+Weapons,Soldiers
+Crystals,Magicians
+
+Bricks,50
+Weapons,50
+Crystals,50
+
+Builders,4
+Magicians,4
+Soldiers,4
